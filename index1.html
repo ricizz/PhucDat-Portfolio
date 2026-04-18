@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phuc Dat - IT Infrastructure Portfolio</title>
+    <style>
+        /* --- 1. THIẾT LẬP CƠ BẢN --- */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background-color: #000000;
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        /* --- 2. NỀN ĐỘNG BLOBS --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            filter: blur(90px);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            width: 40vw;
+            height: 40vw;
+            background: rgba(56, 189, 248, 0.12);
+            top: -10%;
+            left: -10%;
+        }
+
+        .blob-2 {
+            width: 50vw;
+            height: 50vw;
+            background: rgba(129, 140, 248, 0.12);
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(100px, 50px) scale(1.1);
+            }
+        }
+
+        /* --- 3. NAVBAR KÍNH MỜ --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: padding 0.3s ease;
+        }
+
+        nav a {
+            color: #d2d2d7;
+            text-decoration: none;
+            margin: 5px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        /* --- 4. BỐ CỤC SECTIONS --- */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px 20px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .section-desc {
+            max-width: 700px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #a1a1aa;
+            margin-bottom: 40px;
+        }
+
+        /* --- 5. HIỆU ỨNG REVEAL --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        /* --- 6. TRANG CHỦ (THẺ 3D) --- */
+        .card {
+            width: 340px;
+            padding: 40px 30px;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 1);
+            text-align: center;
+            backdrop-filter: blur(16px);
+            transition: transform 0.2s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #38bdf8, #818cf8);
+            padding: 4px;
+            transform: translateZ(60px);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            transform: translateZ(40px);
+            color: #fff;
+        }
+
+        .title {
+            color: #38bdf8;
+            font-size: 14px;
+            min-height: 20px;
+            transform: translateZ(30px);
+            font-family: monospace;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: #38bdf8;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            transform: translateZ(50px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #38bdf8;
+            color: #000;
+            box-shadow: 0 0 20px #38bdf8;
+            transform: scale(1.05);
+        }
+
+        /* --- 7. TIMELINE (HỌC VẤN & KINH NGHIỆM) --- */
+        .timeline {
+            width: 100%;
+            max-width: 800px;
+            border-left: 2px solid #333;
+            padding-left: 30px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #38bdf8;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #38bdf8;
+        }
+
+        .timeline-date {
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        .timeline-content {
+            color: #a1a1aa;
+            font-size: 1rem;
+        }
+
+        /* --- 8. GRID DỰ ÁN --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .content-card {
+            background: rgba(28, 28, 30, 0.6);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
+        }
+
+        .content-card h3 {
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        .content-card p {
+            color: #a1a1aa;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* --- 9. AI CHATBOT UI --- */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .chat-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 340px;
+            height: 450px;
+            background: rgba(15, 15, 18, 0.9);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px) scale(0.9);
+            transition: all 0.3s;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .chat-window.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-msg {
+            max-width: 85%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .msg-bot {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-user {
+            background: #38bdf8;
+            color: #000;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #38bdf8;
+        }
+
+        .chat-input-area button {
+            background: #38bdf8;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: #000;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- 10. UI LOADING XOAY XOAY --- */
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #38bdf8;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .typing-container {
+            display: flex;
+            align-items: center;
+            color: #a1a1aa;
+            font-style: italic;
+            font-size: 0.85rem;
+        }
+
+        /* --- 11. ĐÁP ỨNG MỌI MÀN HÌNH (RESPONSIVE) --- */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .card {
+                width: 85%;
+                padding: 30px 20px;
+            }
+
+            nav {
+                padding: 10px 0;
+            }
+
+            nav a {
+                margin: 5px 8px;
+                font-size: 13px;
+            }
+
+            .timeline {
+                padding-left: 20px;
+            }
+
+            .timeline-item::before {
+                left: -27px;
+            }
+
+            .chat-window {
+                width: 90vw;
+                bottom: 70px;
+                right: 5vw;
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav id="navbar">
+        <a href="#home">Trang chủ</a>
+        <a href="#about">Về tôi</a>
+        <a href="#education">Học vấn</a>
+        <a href="#experience">Kinh nghiệm</a>
+        <a href="#projects">Dự án</a>
+    </nav>
+
+    <section id="home">
+        <div class="card reveal" id="profileCard">
+            <div class="avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Phuc Dat"></div>
+            <div class="name">PHUC DAT (PDO)</div>
+            <div class="title"><span id="typingText"></span><span class="cursor"></span></div>
+            <div class="btn-container">
+                <a href="#about" class="btn">Khám Phá</a>
+                <a href="https://www.youtube.com/watch?v=xnIIoan7ft8" target="_blank" class="btn"
+                    style="background: transparent;">Nghe Nhạc 🎵</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title reveal">Đam mê Hệ thống.<br>Và Âm nhạc.</h2>
+        <div class="section-desc reveal delay-1">
+            "Sự kết hợp hoàn hảo giữa những dòng lệnh logic và nhịp điệu nghệ thuật. Mình là một cá nhân đam mê xây dựng
+            hạ tầng mạng Enterprise vững chắc, nhưng khi cần thư giãn, một cây đàn Roland hay một con beat Trap 145 BPM
+            trên BandLab là người bạn đồng hành tuyệt vời nhất."
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;" class="reveal delay-2">
+            <span
+                style="padding: 8px 15px; background: #1c1c1e; border-radius: 20px; font-size: 0.9rem; border: 1px solid #333;">Cisco
+                & Juniper Networks</span>
+            <span
+                style="padding: 8px 15px; background: #1c1c1e; border-radius: 20px; font-size: 0.9rem; border: 1px solid #333;">Windows
+                Server / Linux</span>
+            <span
+                style="padding: 8px 15px; background: #1c1c1e; border-radius: 20px; font-size: 0.9rem; border: 1px solid #333;">Cyber
+                Security</span>
+            <span
+                style="padding: 8px 15px; background: #1c1c1e; border-radius: 20px; font-size: 0.9rem; border: 1px solid #333;">Music
+                Production (Hip-hop)</span>
+        </div>
+    </section>
+
+    <section id="education">
+        <h2 class="section-title reveal">Hành trang<br>Kiến thức.</h2>
+        <div class="timeline">
+            <div class="timeline-item reveal delay-1">
+                <div class="timeline-date">Hiện tại - Kết thúc kỳ: Tháng 4/2026</div>
+                <h3 class="timeline-title">Conestoga College - Kitchener, ON</h3>
+                <div class="timeline-content">Theo học chương trình <strong>Computer Systems Technician – Information
+                        Technology Infrastructure and Services</strong>. Tập trung chuyên sâu vào quản trị mạng, thiết
+                    kế hạ tầng và bảo mật thông tin. Tích cực tìm hiểu thêm về các chứng chỉ Graduate Certificates ngành
+                    Cybersecurity cho định hướng tương lai.</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2 class="section-title reveal">Kinh nghiệm<br>Thực chiến.</h2>
+        <div class="timeline">
+            <div class="timeline-item reveal delay-1">
+                <div class="timeline-date">Dự án môn học / Lab Thực hành</div>
+                <h3 class="timeline-title">System & Network Administrator</h3>
+                <div class="timeline-content">
+                    Xử lý và triển khai thành công hàng loạt các bài Lab cấu hình phức tạp:
+                    <ul style="margin-top: 10px; padding-left: 20px;">
+                        <li>Triển khai cấu hình định tuyến OSPF, LACP/LAG trên thiết bị Cisco/Juniper.</li>
+                        <li>Cài đặt và quản trị Windows Server (Active Directory, DNS/DHCP, GPO).</li>
+                        <li>Thiết lập tường lửa Palo Alto Firewall và hệ thống mail Exchange Server.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title reveal">Dự án<br>Nổi bật.</h2>
+        <div class="grid-container">
+            <div class="content-card reveal delay-1">
+                <div class="content-icon">📱</div>
+                <h3>App</h3>
+                <p>Ứng dụng Study Planner tích hợp sức mạnh AI được phát triển cùng bạn bè. Ứng dụng sử dụng hạ tầng
+                    mạnh mẽ từ <strong>Firebase, Firestore, Cloud Functions</strong> và triển khai trên <strong>Oracle
+                        Cloud</strong> kết hợp bảo mật Cloudflare SSL. Hỗ trợ iCal integration đồng bộ lịch trình xuất
+                    sắc.</p>
+            </div>
+            <div class="content-card reveal delay-2">
+                <div class="content-icon">🌐</div>
+                <h3>Interactive AI Portfolio</h3>
+                <p>Website cá nhân tương tác 3D, tích hợp trực tiếp trợ lý ảo Gemini 2.5 Flash thông minh giúp phản hồi
+                    khách truy cập theo thời gian thực.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="reveal"
+        style="text-align: center; padding: 40px 20px; color: #666; font-size: 0.9rem; border-top: 1px solid #1c1c1e;">
+        <p>&copy; 2026 Phuc Dat. Thiết kế bằng 💻, quản trị bằng 🧠 và chill cùng 🎵 BandLab.</p>
+    </footer>
+
+    <div class="chatbot-container">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3>✨ Trợ lý AI thông minh nhất</h3>
+                <span style="cursor:pointer; font-size: 22px;" onclick="toggleChat()">×</span>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-msg msg-bot">Chào bạn! Mình là AI của Phúc Đạt</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Nhập câu hỏi..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        <div class="chat-btn" onclick="toggleChat()">✨</div>
+    </div>
+
+    <script>
+        // 1. TILT 3D HIỆU ỨNG THẺ
+        const card = document.getElementById('profileCard');
+        if (window.matchMedia("(min-width: 768px)").matches) { // Chỉ bật Tilt trên PC
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10;
+                const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)`; });
+        }
+
+        // 2. TYPING EFFECT
+        const textToType = "IT Infrastructure | Cyber Security";
+        const typingElement = document.getElementById('typingText');
+        let textIndex = 0;
+        function type() {
+            if (textIndex < textToType.length) {
+                typingElement.textContent += textToType.charAt(textIndex);
+                textIndex++; setTimeout(type, 80);
+            }
+        }
+        window.onload = () => { setTimeout(type, 500); };
+
+        // 3. SCROLL REVEAL (XUẤT HIỆN KHI CUỘN CHUỘT)
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("active"); });
+            }, { threshold: 0.1 });
+            reveals.forEach(el => observer.observe(el));
+        }
+        reveal();
+        window.addEventListener("scroll", () => { document.getElementById("navbar").style.padding = window.scrollY > 50 ? "10px 0" : "15px 0"; });
+
+        // 4. BỘ NÃO GEMINI API
+        const chatWindow = document.getElementById("chatWindow");
+        const chatBody = document.getElementById("chatBody");
+        const userInput = document.getElementById("userInput");
+
+        // 🔴🔴🔴 DÁN MÃ API KEY CỦA BẠN VÀO ĐÂY 🔴🔴🔴
+        const GEMINI_API_KEY = "AIzaSyDH4LykQQxo0ScHMxvFcISHztl-z0Ql5Wg";
+
+        function toggleChat() { chatWindow.classList.toggle("show"); if (chatWindow.classList.contains("show")) userInput.focus(); }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, "msg-user");
+            userInput.value = "";
+
+            // TẠO UI LOADING XOAY XOAY
+            const typingIndicator = document.createElement("div");
+            typingIndicator.className = "chat-msg msg-bot";
+            typingIndicator.innerHTML = `<div class="typing-container"><div class="loading-spinner"></div>Đang phân tích...</div>`;
+            chatBody.appendChild(typingIndicator);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Easter Egg (Khịa DLS)
+            const inputLower = text.toLowerCase();
+            if (inputLower.includes("dls") || inputLower.includes("đức")) {
+                chatBody.removeChild(typingIndicator);
+                appendMessage("Câu đó cũng phải hỏi hả mày chứ ai", "msg-bot");
+                setTimeout(() => { appendMessage("Hèn gì tao thấy mấy nay mày rủ Đức mà nó không dám chơi 🤣", "msg-bot"); }, 1000);
+                return;
+            }
+
+            // GỌI GEMINI API
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+                // NẠP THÔNG TIN CỦA ĐẠT CHO BOT
+                const promptContext = `Bạn là trợ lý AI ảo trên trang cá nhân của Phuc Dat
+                Hãy trả lời câu hỏi sau của khách một cách thông minh, ngắn gọn (3-4 câu), rành mạch và ra dáng dân IT chuyên nghiệp: "${text}"`;
+
+                const response = await fetch(apiUrl, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptContext }] }] })
+                });
+
+                const data = await response.json();
+                chatBody.removeChild(typingIndicator);
+
+                if (data.candidates && data.candidates.length > 0) {
+                    appendMessage(data.candidates[0].content.parts[0].text, "msg-bot");
+                } else if (data.error) {
+                    appendMessage("⚠️ Lỗi Google API: " + data.error.message, "msg-bot");
+                } else {
+                    appendMessage("Lỗi kết nối. Vui lòng thử lại sau!", "msg-bot");
+                }
+            } catch (error) {
+                chatBody.removeChild(typingIndicator);
+                appendMessage("Hệ thống mạng đang gặp sự cố. Bạn kiểm tra lại kết nối nhé!", "msg-bot");
+            }
+        }
+
+        function appendMessage(text, className) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `chat-msg ${className}`;
+            msgDiv.innerHTML = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            chatBody.appendChild(msgDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function handleKeyPress(e) { if (e.key === "Enter") sendMessage(); }
+    </script>
+</body>
+
+</html>
